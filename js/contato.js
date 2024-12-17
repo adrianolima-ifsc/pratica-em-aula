@@ -1,7 +1,11 @@
 const formulario = document.querySelector('.contato__formulario');
-// const botao = document.querySelector('')
 
-const contatos = [];
+const contatos = JSON.parse(localStorage.getItem('contatos')) || [];
+const preenchido = JSON.parse(localStorage.getItem('preenchido')) || {};
+
+for (let id in preenchido) {
+    document.querySelector(`#${id}`).value = preenchido[id];
+}
 
 formulario.addEventListener("submit", evento => {
     evento.preventDefault();
@@ -21,9 +25,20 @@ formulario.addEventListener("submit", evento => {
     const contato = { nome, email, periodo, mensagem };
     contatos.push(contato);
 
+    localStorage.setItem('contatos', JSON.stringify(contatos));
+
     console.log(contatos);
 
     evento.target.reset();
     aviso.textContent = "Responderemos depois da pescaria."
     aviso.classList.remove('cuidado');
+
+    localStorage.removeItem('preenchido');
+
+    atualizaTabela();
 });
+
+formulario.addEventListener("change", evento => {
+    preenchido[evento.target.id] = evento.target.value;
+    localStorage.setItem('preenchido', JSON.stringify(preenchido));
+})
